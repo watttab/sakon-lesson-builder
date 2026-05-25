@@ -213,6 +213,7 @@ function App() {
           },
           body: JSON.stringify({
             action: 'setupDatabase',
+            courseName: `${subject} เรื่อง ${topic}`,
             lessons: parsedData.lessons,
             quizzes: parsedData.quizzes
           })

@@ -110,10 +110,25 @@ function handleSetupDatabase(data) {
   getOrCreateSheet(ss, "Users");
   getOrCreateSheet(ss, "StudentScores");
   var sheetConfig = getOrCreateSheet(ss, "Config");
+  var courseNameVal = data.courseName || "หลักสูตรระบบบทเรียนออนไลน์";
   if (sheetConfig.getLastRow() === 0) {
     sheetConfig.appendRow(["Key", "Value"]);
     sheetConfig.appendRow(["TEMPLATE_SLIDE_ID", "ใส่_ID_ของ_Google_Slides_เกียรติบัตรที่นี่"]);
     sheetConfig.appendRow(["PASSING_PERCENTAGE", "70"]);
+    sheetConfig.appendRow(["COURSE_NAME", courseNameVal]);
+  } else {
+    var configData = sheetConfig.getDataRange().getValues();
+    var foundCourseName = false;
+    for (var i = 1; i < configData.length; i++) {
+      if (configData[i][0] === "COURSE_NAME") {
+        sheetConfig.getRange(i + 1, 2).setValue(courseNameVal);
+        foundCourseName = true;
+        break;
+      }
+    }
+    if (!foundCourseName) {
+      sheetConfig.appendRow(["COURSE_NAME", courseNameVal]);
+    }
   }
 
   return { status: 'success', message: 'เขียนข้อมูลโครงสร้างบทเรียนสำเร็จแล้ว!' };
@@ -203,10 +218,14 @@ function handleGenerateCertificate(data) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var configData = getSheetDataAsJson(ss, "Config");
   var slideTemplateId = "";
+  var courseName = "หลักสูตรระบบบทเรียนออนไลน์";
   
   configData.forEach(function(item) {
     if (item.Key === 'TEMPLATE_SLIDE_ID') {
       slideTemplateId = item.Value;
+    }
+    if (item.Key === 'COURSE_NAME') {
+      courseName = item.Value;
     }
   });
 
@@ -235,6 +254,7 @@ function handleGenerateCertificate(data) {
           textRange.replaceAllText("{{score}}", data.score.toString());
           textRange.replaceAllText("{{total}}", data.total.toString());
           textRange.replaceAllText("{{date}}", dateString);
+          textRange.replaceAllText("{{course}}", courseName);
         }
       });
     });
