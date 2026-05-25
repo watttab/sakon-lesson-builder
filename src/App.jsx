@@ -169,9 +169,9 @@ function App() {
           }
         `;
 
-        addLog('🤖 กำลังสร้างเนื้อหาและข้อสอบผ่าน Gemini 1.5 Flash...');
+        addLog('🤖 กำลังสร้างเนื้อหาและข้อสอบผ่าน Gemini Flash...');
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
           {
             method: 'POST',
             headers: {
