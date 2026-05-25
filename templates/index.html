@@ -118,7 +118,7 @@
           </div>
           
           <div class="flex flex-wrap justify-center gap-4">
-            <button onclick="showPanel('lessons')" class="bg-indigo-600 hover:bg-indigo-500 px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-1.5 shadow-lg shadow-indigo-500/20">
+            <button onclick="showPanel('lessons-panel')" class="bg-indigo-600 hover:bg-indigo-500 px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-1.5 shadow-lg shadow-indigo-500/20">
               <i data-lucide="play-circle" class="w-4.5 h-4.5"></i> เริ่มบทเรียน
             </button>
             <button id="btn-cert-quick" onclick="downloadCertificate()" disabled class="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20">
@@ -185,7 +185,7 @@
         
         <!-- Header -->
         <div class="flex justify-between items-center">
-          <button onclick="showPanel('dashboard')" class="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1">
+          <button onclick="showPanel('dashboard-panel')" class="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1">
             <i data-lucide="chevron-left" class="w-4 h-4"></i> ย้อนกลับไปหน้าแดชบอร์ด
           </button>
           <span class="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-full">แท็บอ่านเนื้อหา</span>
@@ -269,7 +269,7 @@
       <!-- ========================================================= -->
       <div id="teacher-panel" class="hidden space-y-6 my-6">
         <div class="flex justify-between items-center">
-          <button onclick="showPanel('dashboard')" class="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1">
+          <button onclick="showPanel('dashboard-panel')" class="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1">
             <i data-lucide="chevron-left" class="w-4 h-4"></i> ย้อนกลับไปหน้าแดชบอร์ด
           </button>
           <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1 rounded-full">แท็บการวิเคราะห์ประเมินผล</span>
@@ -440,7 +440,7 @@
           courseData = res;
           updateDashboardUI();
           initLessonsUI();
-          showPanel('dashboard');
+          showPanel('dashboard-panel');
         } else {
           Swal.fire({ icon: 'error', title: 'โหลดข้อมูลล้มเหลว', text: 'กรุณาตรวจสอบว่ามีข้อมูลใน Google Sheet หรือไม่', background: '#0f172a', color: '#fff' });
         }
@@ -825,7 +825,7 @@
             color: '#fff'
           }).then(() => {
             updateDashboardUI();
-            showPanel('dashboard');
+            showPanel('dashboard-panel');
           });
           
         } else {
