@@ -286,7 +286,11 @@ function getSheetDataAsJson(ss, name) {
   for (var i = 1; i < values.length; i++) {
     var obj = {};
     for (var j = 0; j < headers.length; j++) {
-      obj[headers[j]] = values[i][j];
+      var val = values[i][j];
+      if (val instanceof Date) {
+        val = Utilities.formatDate(val, Session.getScriptTimeZone(), "dd/MM/yyyy HH:mm:ss");
+      }
+      obj[headers[j]] = val;
     }
     jsonArray.push(obj);
   }

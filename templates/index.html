@@ -288,7 +288,7 @@
                 <tr class="bg-slate-950 text-slate-300 font-semibold border-b border-slate-900">
                   <th class="p-4">ลำดับ</th>
                   <th class="p-4">ชื่อ - นามสกุล</th>
-                  <th class="p-4">อีเมล</th>
+                  <th class="p-4">เลขที่</th>
                   <th class="p-4">สอบก่อนเรียน</th>
                   <th class="p-4">สอบหลังเรียน</th>
                   <th class="p-4">ความก้าวหน้า</th>
@@ -578,24 +578,28 @@
         <p class="text-xs text-slate-400 mt-1">อ่านทำความเข้าใจและศึกษาคลิปเสริมจาก YouTube ที่แนบมา</p>
       `;
 
-      // Set up YouTube Video Iframe
+      // Set up YouTube Video Link
       const videoBox = document.getElementById('video-container');
       if (lesson.YoutubeKeyword) {
-        videoBox.classList.remove('hidden');
-        // Search Keyword embed or default tutorial embed
+        videoBox.className = 'mt-6 mb-2'; // Reset classes for link box
         const query = encodeURIComponent(lesson.YoutubeKeyword);
         videoBox.innerHTML = `
-          <iframe 
-            class="w-full h-full"
-            src="https://www.youtube.com/embed?listType=search&list=${query}" 
-            title="YouTube video player" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            allowfullscreen>
-          </iframe>
+          <a href="https://www.youtube.com/results?search_query=${query}" target="_blank" rel="noopener noreferrer" class="bg-red-600/10 hover:bg-red-600/20 border border-red-500/20 rounded-xl p-4 flex items-center justify-between transition group">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 group-hover:scale-110 transition">
+                <i data-lucide="youtube" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-slate-200">ค้นหาคลิปวิดีโออธิบายเพิ่มเติม</h3>
+                <p class="text-xs text-slate-400 mt-0.5">คลิกเพื่อดูวิดีโอเกี่ยวกับ "${lesson.YoutubeKeyword}" บน YouTube</p>
+              </div>
+            </div>
+            <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-red-400 transition"></i>
+          </a>
         `;
       } else {
-        videoBox.classList.add('hidden');
+        videoBox.className = 'hidden';
+        videoBox.innerHTML = '';
       }
 
       // Format simple text newlines into styled text HTML
@@ -918,7 +922,7 @@
         
         // Match key properties case-sensitively based on returned headers
         const name = row.Name || row[Object.keys(row)[0]] || "";
-        const email = row.Email || row[Object.keys(row)[1]] || "";
+        const studentId = row.StudentID || row.StudentId || row[Object.keys(row)[1]] || "";
         const type = row.Type || row[Object.keys(row)[2]] || "";
         const score = row.Score !== undefined ? row.Score : (row[Object.keys(row)[3]] || 0);
         const total = row.Total !== undefined ? row.Total : (row[Object.keys(row)[4]] || 0);
@@ -930,7 +934,7 @@
         tr.innerHTML = `
           <td class="p-4 text-slate-500">${index + 1}</td>
           <td class="p-4 font-semibold text-slate-200">${name}</td>
-          <td class="p-4 text-slate-400 font-mono">${email}</td>
+          <td class="p-4 text-slate-400 font-mono">${studentId}</td>
           <td class="p-4">${type === 'PreTest' ? `${score}/${total}` : '-'}</td>
           <td class="p-4">${type === 'PostTest' ? `${score}/${total}` : '-'}</td>
           <td class="p-4 font-semibold ${isPassed ? 'text-emerald-400' : 'text-slate-300'}">${percent}%</td>
