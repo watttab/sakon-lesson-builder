@@ -22,9 +22,6 @@ function apiRequest(requestData) {
     if (action === 'ping') {
       result = { status: 'success', message: 'Pong! เชื่อมต่อ Apps Script สำเร็จ' };
     }
-    else if (action === 'register') {
-      result = handleRegister(requestData);
-    }
     else if (action === 'login') {
       result = handleLogin(requestData);
     }
@@ -122,36 +119,31 @@ function handleSetupDatabase(data) {
   return { status: 'success', message: 'เขียนข้อมูลโครงสร้างบทเรียนสำเร็จแล้ว!' };
 }
 
-// สมัครสมาชิกนักเรียน
-function handleRegister(data) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = getOrCreateSheet(ss, "Users");
-  var rows = sheet.getDataRange().getValues();
-  
-  // เช็กว่าอีเมลซ้ำไหม
-  for (var i = 1; i < rows.length; i++) {
-    if (rows[i][1] === data.email) {
-      return { status: 'error', message: 'อีเมลนี้เคยลงทะเบียนแล้ว' };
-    }
-  }
-
-  // บันทึกสมาชิกใหม่ (ชื่อ, อีเมล, รหัสผ่าน, วันที่สมัคร)
-  sheet.appendRow([data.name, data.email, data.password, new Date()]);
-  return { status: 'success', name: data.name, email: data.email };
-}
-
-// ล็อกอินนักเรียน
+// ล็อกอินนักเรียน (และสมัครให้อัตโนมัติถ้ายังไม่มี)
 function handleLogin(data) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = getOrCreateSheet(ss, "Users");
   var rows = sheet.getDataRange().getValues();
   
+  // เพิ่ม Header ถ้าเป็นชีตใหม่
+  if (rows.length === 1 && rows[0][0] === "") {
+    sheet.getRange(1, 1, 1, 3).setValues([["Name", "StudentID", "LastLogin"]]);
+    rows = sheet.getDataRange().getValues();
+  }
+  
+  // เช็กว่ามีชื่อและเลขที่นี้ในระบบหรือยัง
   for (var i = 1; i < rows.length; i++) {
-    if (rows[i][1] === data.email && rows[i][2] === data.password) {
-      return { status: 'success', name: rows[i][0], email: rows[i][1] };
+    // rows[i][0] = ชื่อ, rows[i][1] = เลขที่
+    if (rows[i][0] === data.name && rows[i][1] == data.studentId) {
+      // อัปเดตเวลาเข้าใช้งานล่าสุด
+      sheet.getRange(i + 1, 3).setValue(new Date());
+      return { status: 'success', name: rows[i][0], studentId: rows[i][1] };
     }
   }
-  return { status: 'error', message: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' };
+
+  // ถ้ายังไม่มี ให้บันทึกสมาชิกใหม่ (ชื่อ, เลขที่, วันที่เข้าใช้งาน)
+  sheet.appendRow([data.name, data.studentId, new Date()]);
+  return { status: 'success', name: data.name, studentId: data.studentId };
 }
 
 // ดึงบทเรียนและข้อสอบ
@@ -185,10 +177,10 @@ function handleSubmitScore(data) {
   var percent = (data.score / data.total) * 100;
   var isPassed = percent >= passPercent ? "ผ่าน" : "ไม่ผ่าน";
 
-  // บันทึกประวัติ (ชื่อ, อีเมล, ประเภทสอบ, คะแนน, คะแนนเต็ม, คิดเป็นร้อยละ, ผลการประเมิน, วันที่ส่ง)
+  // บันทึกประวัติ (ชื่อ, เลขที่, ประเภทสอบ, คะแนน, คะแนนเต็ม, คิดเป็นร้อยละ, ผลการประเมิน, วันที่ส่ง)
   sheet.appendRow([
     data.name, 
-    data.email, 
+    data.studentId, 
     data.type, // 'PreTest' หรือ 'PostTest'
     data.score, 
     data.total, 
