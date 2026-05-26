@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>คู่มือระบบสร้างบทเรียนออนไลน์ | GAS Online Lesson Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun','Inter',sans-serif;background:#0a0e1a;color:#cbd5e1;line-height:1.8;scroll-behavior:smooth}
+.bg-glow{position:fixed;inset:0;background:radial-gradient(ellipse at top,rgba(79,70,229,.15),transparent 60%);pointer-events:none;z-index:0}
+.container{max-width:900px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+header{text-align:center;padding:60px 20px 40px}
+header h1{font-size:2rem;font-weight:700;background:linear-gradient(135deg,#818cf8,#a78bfa,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+header p{color:#94a3b8;font-size:1rem}
+nav.toc{background:rgba(30,41,59,.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px 28px;margin:0 auto 40px;max-width:700px}
+nav.toc h3{color:#a78bfa;font-size:.9rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+nav.toc a{display:block;color:#94a3b8;text-decoration:none;padding:6px 0;font-size:.95rem;transition:color .2s}
+nav.toc a:hover{color:#c084fc}
+section{background:rgba(30,41,59,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:32px;margin-bottom:28px}
+section h2{font-size:1.4rem;font-weight:700;color:#e2e8f0;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+section h3{font-size:1.1rem;color:#a78bfa;margin:20px 0 10px;font-weight:600}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.9rem}
+th{background:rgba(99,102,241,.15);color:#a5b4fc;text-align:left;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.08);font-weight:600}
+td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:#cbd5e1}
+tr:hover td{background:rgba(255,255,255,.02)}
+ol,ul{padding-left:24px;margin:10px 0}
+li{margin:6px 0}
+.badge{display:inline-block;background:rgba(99,102,241,.15);color:#a5b4fc;padding:2px 10px;border-radius:20px;font-size:.8rem;font-weight:600}
+.alert{border-radius:12px;padding:16px 20px;margin:16px 0;font-size:.9rem}
+.alert-warn{background:rgba(234,179,8,.08);border-left:4px solid #eab308;color:#fde68a}
+.alert-info{background:rgba(99,102,241,.08);border-left:4px solid #6366f1;color:#c7d2fe}
+.alert-tip{background:rgba(16,185,129,.08);border-left:4px solid #10b981;color:#a7f3d0}
+code{background:rgba(99,102,241,.12);color:#c084fc;padding:2px 7px;border-radius:6px;font-size:.85rem;font-family:'Fira Code',monospace}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:.8rem;font-weight:700;margin-right:8px;flex-shrink:0}
+.img-wrap{text-align:center;margin:20px 0}
+.img-wrap img{max-width:100%;border-radius:12px;border:1px solid rgba(255,255,255,.06)}
+footer{text-align:center;padding:40px 20px;color:#475569;font-size:.85rem;border-top:1px solid rgba(255,255,255,.05);margin-top:20px}
+footer a{color:#818cf8;text-decoration:none}
+@media(max-width:640px){header h1{font-size:1.5rem}section{padding:20px}table{font-size:.8rem}th,td{padding:8px 10px}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<header>
+  <div class="container">
+    <p style="font-size:2.5rem;margin-bottom:8px">📘</p>
+    <h1>คู่มือระบบสร้างบทเรียนออนไลน์อัตโนมัติ</h1>
+    <p>GAS Online Lesson Builder — ขับเคลื่อนด้วย AI Gemini Flash</p>
+    <p style="margin-top:8px;font-size:.85rem;color:#64748b">สำหรับครูผู้เข้ารับการอบรม | จัดทำโดยทีมวิทยากร</p>
+  </div>
+</header>
+
+<div class="container">
+
+<nav class="toc">
+  <h3>📑 สารบัญ</h3>
+  <a href="#what">1. ระบบนี้คืออะไร?</a>
+  <a href="#features">2. จุดเด่นของระบบ 6 ประการ</a>
+  <a href="#overview">3. ภาพรวมการทำงาน</a>
+  <a href="#setup">4. ขั้นตอนตั้งค่าระบบ (สำหรับครู)</a>
+  <a href="#student">5. ขั้นตอนเข้าเรียน (สำหรับนักเรียน)</a>
+  <a href="#teacher">6. แดชบอร์ดครูผู้สอน</a>
+  <a href="#cert">7. การตั้งค่าเกียรติบัตร</a>
+  <a href="#warning">8. ข้อควรระวัง</a>
+  <a href="#tech">9. เทคโนโลยีที่ใช้</a>
+</nav>
+
+<!-- SECTION 1 -->
+<section id="what">
+  <h2>🎯 ระบบนี้คืออะไร?</h2>
+  <p><strong>GAS Online Lesson Builder</strong> คือแพลตฟอร์มสร้างบทเรียนออนไลน์และแบบทดสอบอัตโนมัติ ที่ออกแบบมาให้คุณครูระดับมัธยมศึกษาสามารถ <strong>สร้างห้องเรียนออนไลน์ได้เองภายในไม่กี่นาที</strong> โดยไม่ต้องมีความรู้ด้านการเขียนโปรแกรม</p>
+  <p style="margin-top:12px">ระบบทำงานบน <strong>Google Workspace ของท่านเอง</strong> (Google Sheets + Google Apps Script) ร่วมกับ <strong>AI Gemini Flash</strong> ของ Google ในการเจเนอเรตเนื้อหาและข้อสอบ</p>
+</section>
+
+<!-- SECTION 2 -->
+<section id="features">
+  <h2>✨ จุดเด่นของระบบ 6 ประการ</h2>
+  <table>
+    <tr><th>คุณสมบัติ</th><th>รายละเอียด</th></tr>
+    <tr><td>🤖 สร้างเนื้อหาด้วย AI</td><td>เพียงกรอกชื่อวิชาและหัวข้อ ระบบจะสร้างบทเรียน 3 บทพร้อมข้อสอบให้อัตโนมัติ</td></tr>
+    <tr><td>📊 ฐานข้อมูลบน Google Sheets</td><td>ข้อมูลทั้งหมดเก็บใน Google Drive ของท่าน ปลอดภัย 100%</td></tr>
+    <tr><td>📝 ระบบทดสอบก่อน-หลังเรียน</td><td>วัดผลสัมฤทธิ์ด้วย Pre-test / Post-test พร้อมกราฟเปรียบเทียบ</td></tr>
+    <tr><td>🎓 ออกเกียรติบัตรอัตโนมัติ</td><td>สร้าง PDF เกียรติบัตรจาก Google Slides ที่ท่านออกแบบเอง</td></tr>
+    <tr><td>👨‍🏫 แดชบอร์ดครูผู้สอน</td><td>ดูสรุปคะแนนนักเรียนทุกคนแบบเรียลไทม์</td></tr>
+    <tr><td>💰 ฟรี ไม่มีค่าใช้จ่าย</td><td>ใช้เครื่องมือฟรีของ Google ทั้งหมด ไม่ต้องเสียค่าเซิร์ฟเวอร์</td></tr>
+  </table>
+</section>
+
+<!-- SECTION 3 -->
+<section id="overview">
+  <h2>🔄 ภาพรวมการทำงานของระบบ</h2>
+  <div class="img-wrap"><img src="images/workflow.png" alt="ขั้นตอนการทำงาน"></div>
+  <table>
+    <tr><th>ขั้นตอน</th><th>ผู้ดำเนินการ</th><th>รายละเอียด</th></tr>
+    <tr><td><span class="badge">1</span> ตั้งค่าระบบ</td><td>ครู</td><td>ทำสำเนา Google Sheet Template + Deploy Script</td></tr>
+    <tr><td><span class="badge">2</span> สร้างเนื้อหา</td><td>ครู + AI</td><td>กรอกชื่อวิชา → AI เจเนอเรตบทเรียน + ข้อสอบ → ส่งลง Sheet</td></tr>
+    <tr><td><span class="badge">3</span> เรียนรู้ + สอบ</td><td>นักเรียน</td><td>เปิดลิงก์ → ล็อกอิน → สอบก่อนเรียน → อ่าน → สอบหลังเรียน</td></tr>
+    <tr><td><span class="badge">4</span> ดูผล + เกียรติบัตร</td><td>ครู + นักเรียน</td><td>ครูดูสรุปคะแนน / นักเรียนดาวน์โหลดเกียรติบัตร PDF</td></tr>
+  </table>
+</section>
+
+<!-- SECTION 4 -->
+<section id="setup">
+  <h2>📋 ขั้นตอนการตั้งค่าระบบ (สำหรับคุณครู)</h2>
+
+  <h3><span class="step-num">1</span>ทำสำเนา Google Sheet Template</h3>
+  <ol>
+    <li>เปิดลิงก์ <strong>Google Sheet Template</strong> ที่วิทยากรแจกให้</li>
+    <li>ไปที่เมนู <strong>ไฟล์ (File)</strong> → <strong>ทำสำเนา (Make a copy)</strong></li>
+    <li>ตั้งชื่อไฟล์ตามต้องการ (เช่น "บทเรียนวิทยาศาสตร์ ม.5") แล้วกด <strong>ตกลง</strong></li>
+    <li>ไฟล์สำเนาจะถูกเก็บไว้ใน Google Drive ของท่านเอง</li>
+  </ol>
+
+  <h3><span class="step-num">2</span>ติดตั้ง Apps Script (หลังบ้านของระบบ)</h3>
+  <ol>
+    <li>เปิดไฟล์ Google Sheet สำเนาที่เพิ่งสร้าง</li>
+    <li>ไปที่เมนู <strong>ส่วนขยาย (Extensions)</strong> → <strong>Apps Script</strong></li>
+    <li>จะเปิดหน้าต่างใหม่ขึ้นมา (ตัวแก้ไขสคริปต์)</li>
+    <li><strong>ลบโค้ดเดิมทิ้งทั้งหมด</strong> แล้วนำ <strong>โค้ด <code>Code.gs</code></strong> ที่วิทยากรเตรียมไว้มาวางแทน</li>
+    <li>คลิกที่ไอคอน <strong>"+"</strong> ข้างคำว่า "ไฟล์" (Files) → เลือก <strong>HTML</strong> → ตั้งชื่อว่า <strong><code>index</code></strong></li>
+    <li>ลบโค้ด HTML เดิมทิ้ง แล้วนำ <strong>โค้ด <code>index.html</code></strong> ที่วิทยากรเตรียมไว้มาวางแทน</li>
+    <li>กดปุ่ม <strong>บันทึก</strong> (💾) หรือกด <code>Ctrl + S</code></li>
+  </ol>
+  <div class="alert alert-info">📥 <strong>ดาวน์โหลดโค้ด:</strong> ไฟล์ทั้ง 2 สามารถดาวน์โหลดได้จาก GitHub ของโครงการ → โฟลเดอร์ <code>templates/</code></div>
+
+  <h3><span class="step-num">3</span>Deploy เผยแพร่เว็บแอป</h3>
+  <ol>
+    <li>ในหน้า Apps Script ให้คลิกปุ่ม <strong>ทำให้ใช้งานได้ (Deploy)</strong> → <strong>การทำให้ใช้งานได้แบบใหม่ (New deployment)</strong></li>
+    <li>คลิกไอคอนรูปเฟือง ⚙️ → เลือก <strong>เว็บแอป (Web app)</strong></li>
+    <li>ตั้งค่า:
+      <table>
+        <tr><th>การตั้งค่า</th><th>เลือก</th></tr>
+        <tr><td>คำอธิบาย</td><td>พิมพ์อะไรก็ได้ เช่น "v1"</td></tr>
+        <tr><td>ดำเนินการในฐานะ</td><td><strong>ฉัน (Me)</strong></td></tr>
+        <tr><td>ผู้มีสิทธิ์เข้าถึง</td><td><strong>ทุกคน (Anyone)</strong></td></tr>
+      </table>
+    </li>
+    <li>กดปุ่ม <strong>ทำให้ใช้งานได้ (Deploy)</strong></li>
+    <li>ระบบจะแสดง <strong>URL ของเว็บแอป</strong> — ให้คัดลอกเก็บไว้</li>
+  </ol>
+  <div class="alert alert-tip">💡 URL นี้ใช้ได้ 2 อย่าง: <strong>ลิงก์สำหรับนักเรียน</strong> (เปิดเข้าเรียน) และ <strong>ลิงก์สำหรับเชื่อมต่อ AI</strong> (วางในหน้า Lesson Builder)</div>
+
+  <h3><span class="step-num">4</span>สร้างเนื้อหาบทเรียนด้วย AI</h3>
+  <ol>
+    <li>เปิดเว็บไซต์ <strong><a href="https://sakon-builder.vercel.app" target="_blank" style="color:#818cf8">sakon-builder.vercel.app</a></strong></li>
+    <li>กรอก <strong>Gemini API Key</strong> — ขอฟรีได้ที่ <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#818cf8">aistudio.google.com/apikey</a></li>
+    <li>กรอก <strong>GAS Web App URL</strong> — ลิงก์จากขั้นตอนที่ 3</li>
+    <li>กด <strong>"ทดสอบการเชื่อมต่อ"</strong></li>
+    <li>กรอกข้อมูลวิชา:
+      <table>
+        <tr><th>ช่องกรอก</th><th>ตัวอย่าง</th></tr>
+        <tr><td>รายวิชา / ระดับชั้น</td><td>วิทยาศาสตร์ ม.5</td></tr>
+        <tr><td>หัวข้อบทเรียนหลัก</td><td>เซลล์และการแบ่งเซลล์</td></tr>
+        <tr><td>รายละเอียดเพิ่มเติม</td><td>ออร์แกเนลล์ต่างๆ ไมโทซิสและไมโอซิส</td></tr>
+        <tr><td>จำนวนข้อสอบ</td><td>5-10 ข้อ</td></tr>
+      </table>
+    </li>
+    <li>กดปุ่ม <strong>"เริ่มต้นสร้างด้วย AI"</strong> → รอ 15-30 วินาที → เสร็จ!</li>
+  </ol>
+</section>
+
+<!-- SECTION 5 -->
+<section id="student">
+  <h2>👨‍🎓 ขั้นตอนการเข้าเรียน (สำหรับนักเรียน)</h2>
+  <ol>
+    <li><strong>เข้าสู่ระบบ</strong> — เปิดลิงก์ที่ครูแจก → กรอกชื่อ-นามสกุล + เลขที่ → กดเข้าสู่ระบบ</li>
+    <li><strong>ทำแบบทดสอบก่อนเรียน (Pre-test)</strong> — ระบบจะแจ้งเตือนให้ทำ Pre-test ก่อน → ทำข้อสอบ → ส่งคำตอบ</li>
+    <li><strong>เรียนเนื้อหาบทเรียน</strong> — กดปุ่ม "เริ่มบทเรียน" → อ่านทีละบท → กด "อ่านจบแล้วและบันทึก" ทุกบท</li>
+    <li><strong>ทำแบบทดสอบหลังเรียน (Post-test)</strong> — ปุ่มจะปลดล็อคเมื่ออ่านครบ → ทำข้อสอบ → ส่งคำตอบ</li>
+    <li><strong>ดาวน์โหลดเกียรติบัตร</strong> — กดปุ่ม "ดาวน์โหลดใบประกาศ" → ระบบสร้าง PDF ให้อัตโนมัติ</li>
+  </ol>
+  <div class="alert alert-info">📌 เมื่อนักเรียนอ่านบทเรียนครบทุกบทแล้ว ระบบจะพากลับมาหน้าแรกอัตโนมัติเพื่อทำแบบทดสอบหลังเรียน</div>
+</section>
+
+<!-- SECTION 6 -->
+<section id="teacher">
+  <h2>👨‍🏫 แดชบอร์ดครูผู้สอน</h2>
+  <p>เมื่อครูล็อกอินเข้าสู่ระบบ จะสามารถ:</p>
+  <ul>
+    <li>✅ กดปุ่ม <strong>"เปิดดูสรุปคะแนนนักเรียน"</strong> เพื่อดูตารางคะแนนทุกคน</li>
+    <li>✅ ตรวจสอบว่านักเรียนคนไหน <strong>สอบผ่าน / ไม่ผ่าน</strong></li>
+    <li>✅ ดูคะแนน <strong>Pre-test</strong> และ <strong>Post-test</strong> เปรียบเทียบกัน</li>
+    <li>✅ กดปุ่ม <strong>"แก้ไขการวิเคราะห์ประเมินผล"</strong> เพื่อเข้าไปแก้ไขข้อมูลใน Google Sheet โดยตรง</li>
+  </ul>
+</section>
+
+<!-- SECTION 7 -->
+<section id="cert">
+  <h2>🎓 การตั้งค่าเกียรติบัตร</h2>
+  <ol>
+    <li>สร้าง <strong>Google Slides</strong> ใหม่ที่ <a href="https://slides.new" target="_blank" style="color:#818cf8">slides.new</a></li>
+    <li>ใส่ภาพพื้นหลังเกียรติบัตรที่ต้องการ</li>
+    <li>สร้างกล่องข้อความแล้วพิมพ์ <strong>ตัวแปร</strong> ลงไป:</li>
+  </ol>
+  <table>
+    <tr><th>ตัวแปร</th><th>ข้อมูลที่จะแทนที่อัตโนมัติ</th></tr>
+    <tr><td><code>{{name}}</code></td><td>ชื่อ-นามสกุลนักเรียน</td></tr>
+    <tr><td><code>{{course}}</code></td><td>ชื่อวิชาและหัวข้อที่เรียน</td></tr>
+    <tr><td><code>{{score}}</code></td><td>คะแนนที่สอบได้</td></tr>
+    <tr><td><code>{{total}}</code></td><td>คะแนนเต็ม</td></tr>
+    <tr><td><code>{{date}}</code></td><td>วันที่สอบผ่าน</td></tr>
+  </table>
+  <ol start="4">
+    <li>คัดลอก <strong>Slide ID</strong> จาก URL (ส่วนระหว่าง <code>/d/</code> กับ <code>/edit</code>)</li>
+    <li>นำ ID ไปวางในชีต <strong>Config</strong> → แถว <code>TEMPLATE_SLIDE_ID</code> → คอลัมน์ B</li>
+  </ol>
+</section>
+
+<!-- SECTION 8 -->
+<section id="warning">
+  <h2>⚠️ ข้อควรระวัง</h2>
+  <div class="alert alert-warn">🔴 <strong>สำคัญมาก:</strong> ทุกครั้งที่แก้ไขโค้ดใน Apps Script จะต้องกด <strong>Deploy → Manage deployments → รูปดินสอ ✏️ → เปลี่ยน Version เป็น "New"</strong> ทุกครั้ง มิฉะนั้นการเปลี่ยนแปลงจะไม่มีผลต่อผู้ใช้งาน</div>
+  <ul>
+    <li>Gemini API Key มี <strong>โควตาฟรีต่อวัน</strong> หากใช้หมดให้รอวันถัดไปหรือสมัคร Key ใหม่</li>
+    <li>ข้อมูลทั้งหมดเก็บอยู่ใน Google Drive ของท่าน <strong>ไม่มีข้อมูลถูกส่งไปเก็บที่อื่น</strong></li>
+    <li>หากพบปัญหาหน้าเว็บไม่อัปเดต ให้กด <code>Cmd + Shift + R</code> (Mac) หรือ <code>Ctrl + F5</code> (Windows)</li>
+  </ul>
+</section>
+
+<!-- SECTION 9 -->
+<section id="tech">
+  <h2>🏗️ เทคโนโลยีที่ใช้ในระบบ</h2>
+  <table>
+    <tr><th>เทคโนโลยี</th><th>หน้าที่</th></tr>
+    <tr><td>Google Sheets</td><td>ฐานข้อมูลเก็บบทเรียน ข้อสอบ คะแนน</td></tr>
+    <tr><td>Google Apps Script</td><td>เซิร์ฟเวอร์หลังบ้าน (Web App API)</td></tr>
+    <tr><td>Google Slides</td><td>เทมเพลตเกียรติบัตร</td></tr>
+    <tr><td>Gemini Flash AI</td><td>สร้างเนื้อหาและข้อสอบอัตโนมัติ</td></tr>
+    <tr><td>React + Vercel</td><td>โฮสต์หน้าเว็บ Lesson Builder สำหรับครู</td></tr>
+  </table>
+</section>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>จัดทำโดย ระบบจัดการอบรมครูสร้างบทเรียน ม.ปลาย | พัฒนาด้วย Google Apps Script + AI Gemini Flash</p>
+    <p style="margin-top:6px"><a href="https://github.com/watttab/sakon-lesson-builder" target="_blank">GitHub: watttab/sakon-lesson-builder</a></p>
+  </div>
+</footer>
+</body>
+</html>
