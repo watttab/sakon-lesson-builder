@@ -441,6 +441,21 @@
           updateDashboardUI();
           initLessonsUI();
           showPanel('dashboard-panel');
+          
+          if (userProgress.preTestScore === null && !window.preTestPopupShown) {
+            window.preTestPopupShown = true;
+            setTimeout(() => {
+              Swal.fire({
+                icon: 'info',
+                title: 'เริ่มต้นการเรียนรู้!',
+                text: 'กรุณาทำแบบทดสอบก่อนเรียน (Pre-test) ก่อนเริ่มเข้าสู่เนื้อหาบทเรียน',
+                confirmButtonText: 'ตกลง',
+                confirmButtonColor: '#4f46e5',
+                background: '#0f172a',
+                color: '#fff'
+              });
+            }, 500);
+          }
         } else {
           Swal.fire({ icon: 'error', title: 'โหลดข้อมูลล้มเหลว', text: 'กรุณาตรวจสอบว่ามีข้อมูลใน Google Sheet หรือไม่', background: '#0f172a', color: '#fff' });
         }
@@ -644,6 +659,20 @@
           showConfirmButton: false,
           background: '#0f172a',
           color: '#fff'
+        }).then(() => {
+          if (userProgress.readLessons.length === courseData.lessons.length && userProgress.postTestScore === null) {
+            Swal.fire({
+              icon: 'success',
+              title: 'ยินดีด้วย!',
+              text: 'คุณเรียนจบทุกบทแล้ว ระบบจะพาคุณไปทำแบบทดสอบหลังเรียน',
+              confirmButtonText: 'ไปทำแบบทดสอบ',
+              confirmButtonColor: '#10b981',
+              background: '#0f172a',
+              color: '#fff'
+            }).then(() => {
+              showPanel('dashboard-panel');
+            });
+          }
         });
         
         initLessonsUI();
@@ -849,7 +878,7 @@
 
       Swal.fire({
         title: 'กำลังเชื่อมโยงและสร้างไฟล์ PDF...',
-        html: 'โปรแกรมกำลังสร้างไฟล์โดยใช้ Google Slides คัดลอกและบันทึกเป็น PDF สัญญาณชั่วโมงเร่งด่วนอาจใช้เวลา 10-20 วินาที',
+        html: 'โปรดรอสักครู่ระบบกำลังดำเนินการ',
         allowOutsideClick: false,
         didOpen: () => { Swal.showLoading(); }
       });

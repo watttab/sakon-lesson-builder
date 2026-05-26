@@ -108,7 +108,10 @@ function handleSetupDatabase(data) {
 
   // สร้างตารางอื่นๆ ที่จำเป็นต่อการทำงาน
   getOrCreateSheet(ss, "Users");
-  getOrCreateSheet(ss, "StudentScores");
+  var sheetScores = getOrCreateSheet(ss, "StudentScores");
+  if (sheetScores.getLastRow() === 0) {
+    sheetScores.appendRow(["Name", "StudentId", "Type", "Score", "Total", "Percentage", "Result", "Date"]);
+  }
   var sheetConfig = getOrCreateSheet(ss, "Config");
   var courseNameVal = data.courseName || "หลักสูตรระบบบทเรียนออนไลน์";
   if (sheetConfig.getLastRow() === 0) {
@@ -243,21 +246,13 @@ function handleGenerateCertificate(data) {
     
     // เปิด Presentation เพื่อสลับตัวแปร
     var presentation = SlidesApp.openById(copyId);
-    var slides = presentation.getSlides();
     var dateString = Utilities.formatDate(new Date(), "GMT+7", "dd/MM/yyyy");
 
-    slides.forEach(function(slide) {
-      slide.getShapes().forEach(function(shape) {
-        if (shape.hasText()) {
-          var textRange = shape.getText();
-          textRange.replaceAllText("{{name}}", data.name);
-          textRange.replaceAllText("{{score}}", data.score.toString());
-          textRange.replaceAllText("{{total}}", data.total.toString());
-          textRange.replaceAllText("{{date}}", dateString);
-          textRange.replaceAllText("{{course}}", courseName);
-        }
-      });
-    });
+    presentation.replaceAllText("{{name}}", data.name);
+    presentation.replaceAllText("{{score}}", data.score.toString());
+    presentation.replaceAllText("{{total}}", data.total.toString());
+    presentation.replaceAllText("{{date}}", dateString);
+    presentation.replaceAllText("{{course}}", courseName);
     
     presentation.saveAndClose();
     
