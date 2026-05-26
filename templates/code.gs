@@ -113,7 +113,7 @@ function handleSetupDatabase(data) {
   var courseNameVal = data.courseName || "หลักสูตรระบบบทเรียนออนไลน์";
   if (sheetConfig.getLastRow() === 0) {
     sheetConfig.appendRow(["Key", "Value"]);
-    sheetConfig.appendRow(["TEMPLATE_SLIDE_ID", "ใส่_ID_ของ_Google_Slides_เกียรติบัตรที่นี่"]);
+    sheetConfig.appendRow(["TEMPLATE_SLIDE_ID", "1sxqxaVlZq7cXEJNhQwcZtC9pyUR_m5SddLyctOt2r7o"]);
     sheetConfig.appendRow(["PASSING_PERCENTAGE", "70"]);
     sheetConfig.appendRow(["COURSE_NAME", courseNameVal]);
   } else {
