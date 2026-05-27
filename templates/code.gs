@@ -123,15 +123,25 @@ function handleSetupDatabase(data) {
   } else {
     var configData = sheetConfig.getDataRange().getValues();
     var foundCourseName = false;
+    var foundTeacherName = false;
+    var teacherNameVal = data.teacherName || "ระบุชื่อครูในชีต Config";
+    
     for (var i = 1; i < configData.length; i++) {
       if (configData[i][0] === "COURSE_NAME") {
         sheetConfig.getRange(i + 1, 2).setValue(courseNameVal);
         foundCourseName = true;
-        break;
+      }
+      if (configData[i][0] === "TEACHER_NAME") {
+        sheetConfig.getRange(i + 1, 2).setValue(teacherNameVal);
+        foundTeacherName = true;
       }
     }
+    
     if (!foundCourseName) {
       sheetConfig.appendRow(["COURSE_NAME", courseNameVal]);
+    }
+    if (!foundTeacherName) {
+      sheetConfig.appendRow(["TEACHER_NAME", teacherNameVal]);
     }
   }
 
