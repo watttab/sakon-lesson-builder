@@ -550,6 +550,81 @@
     // -------------------------------------------------------------
     let activeChapter = 1;
 
+    // Markdown → Beautiful HTML Converter
+    function formatContent(raw) {
+      if (!raw) return '';
+      const headingEmojis = ['📌','📖','💡','🔬','🧪','⚡','🎯','📝','🌟','✨'];
+      let emojiIdx = 0;
+      const lines = raw.split('\n');
+      let html = '';
+      let inList = false;
+      let listType = '';
+
+      function closeList() {
+        if (inList) { html += listType === 'ol' ? '</ol>' : '</ul>'; inList = false; }
+      }
+
+      lines.forEach(line => {
+        let trimmed = line.trim();
+        if (!trimmed) { closeList(); html += '<div style="height:8px"></div>'; return; }
+
+        // --- Headings ---
+        const h1 = trimmed.match(/^#{1}\s+(.+)/);
+        const h2 = trimmed.match(/^#{2}\s+(.+)/);
+        const h3 = trimmed.match(/^#{3,}\s+(.+)/);
+
+        if (h1) {
+          closeList();
+          const emoji = headingEmojis[emojiIdx++ % headingEmojis.length];
+          const text = h1[1].replace(/[#:!?"]/g, '').trim();
+          html += `<div style="background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(168,85,247,.1));border:1px solid rgba(129,140,248,.2);border-radius:12px;padding:14px 18px;margin:20px 0 12px;display:flex;align-items:center;gap:10px"><span style="font-size:1.4rem">${emoji}</span><span style="font-size:1.15rem;font-weight:700;color:#e2e8f0">${text}</span></div>`;
+          return;
+        }
+        if (h2) {
+          closeList();
+          const emoji = headingEmojis[emojiIdx++ % headingEmojis.length];
+          const text = h2[1].replace(/[#:!?"]/g, '').trim();
+          html += `<div style="margin:18px 0 8px;display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">${emoji}</span><span style="font-size:1.05rem;font-weight:600;color:#a78bfa">${text}</span></div>`;
+          return;
+        }
+        if (h3) {
+          closeList();
+          const text = h3[1].replace(/[#:!?"]/g, '').trim();
+          html += `<div style="margin:14px 0 6px;padding-left:8px;border-left:3px solid rgba(129,140,248,.4);display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:#818cf8;flex-shrink:0"></span><span style="font-size:.95rem;font-weight:600;color:#c4b5fd">${text}</span></div>`;
+          return;
+        }
+
+        // --- Ordered list ---
+        const olMatch = trimmed.match(/^(\d+)\.\s+(.+)/);
+        if (olMatch) {
+          if (!inList || listType !== 'ol') { closeList(); html += '<ol style="padding-left:0;margin:8px 0;list-style:none;counter-reset:none">'; inList = true; listType = 'ol'; }
+          let content = olMatch[2].replace(/\*\*(.+?)\*\*/g, '<strong style="color:#e2e8f0">$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>');
+          html += `<li style="display:flex;align-items:flex-start;gap:10px;margin:6px 0;padding:8px 12px;background:rgba(30,41,59,.5);border-radius:8px"><span style="min-width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${olMatch[1]}</span><span style="color:#cbd5e1;line-height:1.6">${content}</span></li>`;
+          return;
+        }
+
+        // --- Unordered list ---
+        const ulMatch = trimmed.match(/^[\-\*]\s+(.+)/);
+        if (ulMatch) {
+          if (!inList || listType !== 'ul') { closeList(); html += '<ul style="padding-left:0;margin:8px 0;list-style:none">'; inList = true; listType = 'ul'; }
+          let content = ulMatch[1].replace(/\*\*(.+?)\*\*/g, '<strong style="color:#e2e8f0">$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>');
+          html += `<li style="display:flex;align-items:flex-start;gap:10px;margin:5px 0;padding:6px 12px"><span style="width:7px;height:7px;border-radius:50%;background:#818cf8;margin-top:8px;flex-shrink:0"></span><span style="color:#cbd5e1;line-height:1.6">${content}</span></li>`;
+          return;
+        }
+
+        // --- Normal paragraph ---
+        closeList();
+        let text = trimmed;
+        text = text.replace(/^[#]+\s*/, '');
+        text = text.replace(/\*\*(.+?)\*\*/g, '<strong style="color:#e2e8f0">$1</strong>');
+        text = text.replace(/\*(.+?)\*/g, '<em style="color:#a5b4fc">$1</em>');
+        html += `<p style="color:#94a3b8;line-height:1.8;margin:6px 0">${text}</p>`;
+      });
+
+      closeList();
+      return html;
+    }
+
     function initLessonsUI() {
       const sidebar = document.getElementById('lesson-navigation');
       sidebar.innerHTML = '';
@@ -596,20 +671,23 @@
       // Set up YouTube Video Link
       const videoBox = document.getElementById('video-container');
       if (lesson.YoutubeKeyword) {
-        videoBox.className = 'mt-6 mb-2'; // Reset classes for link box
+        videoBox.className = 'mt-6 mb-4';
         const query = encodeURIComponent(lesson.YoutubeKeyword);
         videoBox.innerHTML = `
-          <a href="https://www.youtube.com/results?search_query=${query}" target="_blank" rel="noopener noreferrer" class="bg-red-600/10 hover:bg-red-600/20 border border-red-500/20 rounded-xl p-4 flex items-center justify-between transition group">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 group-hover:scale-110 transition">
-                <i data-lucide="youtube" class="w-5 h-5"></i>
+          <a href="https://www.youtube.com/results?search_query=${query}" target="_blank" rel="noopener noreferrer"
+             style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.15);border-radius:14px;text-decoration:none;transition:all .3s"
+             onmouseover="this.style.background='linear-gradient(135deg,rgba(239,68,68,.15),rgba(239,68,68,.06))';this.style.transform='translateY(-1px)'"
+             onmouseout="this.style.background='linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.03))';this.style.transform='none'">
+            <div style="display:flex;align-items:center;gap:14px">
+              <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#dc2626,#ef4444);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><polygon points="10 8 16 12 10 16"/></svg>
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-slate-200">ค้นหาคลิปวิดีโออธิบายเพิ่มเติม</h3>
-                <p class="text-xs text-slate-400 mt-0.5">คลิกเพื่อดูวิดีโอเกี่ยวกับ "${lesson.YoutubeKeyword}" บน YouTube</p>
+                <div style="font-size:.95rem;font-weight:600;color:#f1f5f9">🎬 วิดีโอประกอบการเรียนรู้</div>
+                <div style="font-size:.8rem;color:#94a3b8;margin-top:2px">ค้นหาคลิปเกี่ยวกับ "${lesson.YoutubeKeyword}" บน YouTube</div>
               </div>
             </div>
-            <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-red-400 transition"></i>
+            <div style="color:#64748b;font-size:.75rem">เปิด ↗</div>
           </a>
         `;
       } else {
@@ -617,10 +695,10 @@
         videoBox.innerHTML = '';
       }
 
-      // Format simple text newlines into styled text HTML
-      const formattedContent = lesson.Content.replace(/\n/g, '<br>');
+      // Format Markdown content into beautiful styled HTML
+      const formattedContent = formatContent(lesson.Content);
       document.getElementById('lesson-text').innerHTML = `
-        <div class="prose prose-invert max-w-none text-slate-300 text-sm md:text-base space-y-4">
+        <div style="max-width:none;font-size:.95rem">
           ${formattedContent}
         </div>
       `;
