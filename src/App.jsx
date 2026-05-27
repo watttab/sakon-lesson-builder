@@ -28,6 +28,7 @@ function App() {
   const [topic, setTopic] = useState('เซลล์และการแบ่งเซลล์');
   const [subtopic, setSubtopic] = useState('ออร์แกเนลล์ต่างๆ การแบ่งเซลล์แบบไมโทซิสและไมโอซิส');
   const [quizCount, setQuizCount] = useState(10);
+  const [teacherName, setTeacherName] = useState('');
   
   // App States
   const [step, setStep] = useState(1);
@@ -214,6 +215,7 @@ function App() {
           body: JSON.stringify({
             action: 'setupDatabase',
             courseName: `${subject} เรื่อง ${topic}`,
+            teacherName: teacherName,
             lessons: parsedData.lessons,
             quizzes: parsedData.quizzes
           })
@@ -394,6 +396,20 @@ function App() {
                 </div>
 
                 <div className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        ชื่อ-นามสกุลครูผู้สอน (แสดงที่ Footer)
+                      </label>
+                      <input
+                        type="text"
+                        value={teacherName}
+                        onChange={(e) => setTeacherName(e.target.value)}
+                        placeholder="เช่น สมชาย ใจดี"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-slate-200"
+                      />
+                    </div>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">

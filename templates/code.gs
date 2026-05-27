@@ -119,6 +119,7 @@ function handleSetupDatabase(data) {
     sheetConfig.appendRow(["TEMPLATE_SLIDE_ID", "1sxqxaVlZq7cXEJNhQwcZtC9pyUR_m5SddLyctOt2r7o"]);
     sheetConfig.appendRow(["PASSING_PERCENTAGE", "70"]);
     sheetConfig.appendRow(["COURSE_NAME", courseNameVal]);
+    sheetConfig.appendRow(["TEACHER_NAME", data.teacherName || "ระบุชื่อครูในชีต Config"]);
   } else {
     var configData = sheetConfig.getDataRange().getValues();
     var foundCourseName = false;
@@ -171,10 +172,21 @@ function handleGetCourseData() {
   var lessons = getSheetDataAsJson(ss, "Lessons");
   var quizzes = getSheetDataAsJson(ss, "Quizzes");
   
+  // Read config values for courseName and teacherName
+  var courseName = "";
+  var teacherName = "";
+  var configData = getSheetDataAsJson(ss, "Config");
+  configData.forEach(function(item) {
+    if (item.Key === 'COURSE_NAME') courseName = item.Value;
+    if (item.Key === 'TEACHER_NAME') teacherName = item.Value;
+  });
+
   return { 
     status: 'success', 
     lessons: lessons, 
-    quizzes: quizzes 
+    quizzes: quizzes,
+    courseName: courseName,
+    teacherName: teacherName
   };
 }
 

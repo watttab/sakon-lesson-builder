@@ -47,7 +47,7 @@
           <div class="p-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-indigo-400">
             <i data-lucide="book-open" class="w-5 h-5"></i>
           </div>
-          <span class="font-bold text-sm md:text-base bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">ห้องเรียนออนไลน์ ม.ปลาย</span>
+          <span id="navbar-title" class="font-bold text-sm md:text-base bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">ห้องเรียนออนไลน์</span>
         </div>
         <div class="flex items-center gap-3 md:gap-5">
           <span id="user-display" class="text-xs md:text-sm text-slate-300 font-medium"></span>
@@ -310,9 +310,8 @@
 
     <!-- Footer -->
     <footer class="glass border-t border-slate-900 py-6 text-center text-xs text-slate-500 mt-auto">
-      <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-2">
-        <span>บทเรียนออนไลน์</span>
-        <span>สนับสนุนโดย Gemini Flash</span>
+      <div class="max-w-6xl mx-auto px-6">
+        <span id="footer-text">ห้องเรียนออนไลน์</span>
       </div>
     </footer>
 
@@ -441,6 +440,16 @@
           updateDashboardUI();
           initLessonsUI();
           showPanel('dashboard-panel');
+
+          // Dynamic navbar title from COURSE_NAME
+          if (res.courseName) {
+            document.getElementById('navbar-title').textContent = 'ห้องเรียนออนไลน์ ' + res.courseName;
+          }
+          // Dynamic footer with teacher name
+          if (res.teacherName) {
+            const cleanName = res.teacherName.replace(/^(นาย|นาง|นางสาว|ครู|อาจารย์|ผศ\.)\s*/, '').trim();
+            document.getElementById('footer-text').textContent = 'ห้องเรียนออนไลน์ โดยครู' + cleanName;
+          }
           
           if (userProgress.preTestScore === null && !window.preTestPopupShown) {
             window.preTestPopupShown = true;
@@ -1023,27 +1032,51 @@
         return;
       }
 
-      scores.forEach((row, index) => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-900/30 transition border-b border-slate-900/80";
-        
-        // Match key properties case-sensitively based on returned headers
+      // Group scores by student (Name + StudentId)
+      const studentMap = {};
+      scores.forEach(row => {
         const name = row.Name || row[Object.keys(row)[0]] || "";
-        const studentId = row.StudentID || row.StudentId || row[Object.keys(row)[1]] || "";
+        const studentId = row.StudentId || row.StudentID || row[Object.keys(row)[1]] || "";
+        const key = name + '|' + studentId;
+        if (!studentMap[key]) {
+          studentMap[key] = { name, studentId, pre: null, post: null };
+        }
         const type = row.Type || row[Object.keys(row)[2]] || "";
         const score = row.Score !== undefined ? row.Score : (row[Object.keys(row)[3]] || 0);
         const total = row.Total !== undefined ? row.Total : (row[Object.keys(row)[4]] || 0);
         const percent = row.Percentage !== undefined ? row.Percentage : (row[Object.keys(row)[5]] || "0.00");
-        const statusVal = row.Result || row[Object.keys(row)[6]] || "ไม่ระบุ";
+        const result = row.Result || row[Object.keys(row)[6]] || "ไม่ระบุ";
 
-        const isPassed = statusVal === "ผ่าน";
+        if (type === 'PreTest') {
+          studentMap[key].pre = { score, total, percent, result };
+        } else if (type === 'PostTest') {
+          studentMap[key].post = { score, total, percent, result };
+        }
+      });
+
+      const students = Object.values(studentMap);
+      students.forEach((s, index) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-900/30 transition border-b border-slate-900/80";
+
+        const preText = s.pre ? `${s.pre.score}/${s.pre.total}` : '-';
+        const postText = s.post ? `${s.post.score}/${s.post.total}` : '-';
+        
+        // Use post-test result for pass/fail status; fallback to pre-test
+        const evalData = s.post || s.pre;
+        const percent = evalData ? evalData.percent : '0.00';
+        const statusVal = evalData ? evalData.result : 'รอสอบ';
+        const isPassed = statusVal === 'ผ่าน';
+
+        // Strip title prefixes for display
+        const displayName = s.name.replace(/^(นาย|นาง|นางสาว|เด็กชาย|เด็กหญิง|ด\.ช\.|ด\.ญ\.)\s*/, '').trim() || s.name;
 
         tr.innerHTML = `
           <td class="p-4 text-slate-500">${index + 1}</td>
-          <td class="p-4 font-semibold text-slate-200">${name}</td>
-          <td class="p-4 text-slate-400 font-mono">${studentId}</td>
-          <td class="p-4">${type === 'PreTest' ? `${score}/${total}` : '-'}</td>
-          <td class="p-4">${type === 'PostTest' ? `${score}/${total}` : '-'}</td>
+          <td class="p-4 font-semibold text-slate-200">${s.name}</td>
+          <td class="p-4 text-slate-400 font-mono">${s.studentId}</td>
+          <td class="p-4">${preText}</td>
+          <td class="p-4">${postText}</td>
           <td class="p-4 font-semibold ${isPassed ? 'text-emerald-400' : 'text-slate-300'}">${percent}%</td>
           <td class="p-4">
             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${isPassed ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/40' : 'bg-slate-950 text-slate-500 border border-slate-800'}">
